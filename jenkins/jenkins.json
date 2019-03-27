@@ -1,0 +1,38 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+    "subscription_id": "5fdb292f-4e25-4094-ba84-ae19e7f707d5",
+    "client_id": "f557b322-40b3-45f4-b4d1-f70ce36807c0",
+    "client_secret": "dbe6f0ee-3868-437d-9121-abd9e0fb8fa0",
+    "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+
+    "managed_image_resource_group_name": "Images", 
+    "managed_image_name": "myJenkinsImage",
+
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "18.04-LTS",
+
+    "azure_tags": {
+        "dept": "Engineering",
+        "task": "Image deployment"
+    },
+
+    "location": "East US",
+    "vm_size": "Standard_DS2_v2"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | apt-key add -",
+      "echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list",
+      "apt-get update",
+      "apt-get -y install openjdk-8-jdk-headless",
+      "apt-get -y install jenkins",
+      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }]
+}
