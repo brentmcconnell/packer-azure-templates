@@ -1,25 +1,35 @@
 {
+    "variables": {
+    "secretKey":      "{{env `AZURE_SECRET`}}",
+    "clientId":       "{{env `AZURE_CLIENTID`}}",
+    "subscriptionId": "{{env `AZURE_SUBSCRIPTIONID`}}",
+    "tenantId":       "{{env `AZURE_TENANTID`}}",
+    "cloud":          "{{env `AZURE_CLOUD`}}",
+    "location":       "{{env `AZURE_LOCATION`}}"
+  },
   "builders": [{
     "type": "azure-arm",
-    "subscription_id": "5fdb292f-4e25-4094-ba84-ae19e7f707d5",
-    "client_id": "f557b322-40b3-45f4-b4d1-f70ce36807c0",
-    "client_secret": "dbe6f0ee-3868-437d-9121-abd9e0fb8fa0",
-    "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "subscription_id":          "{{user `subscriptionId`}}",
+    "client_id":                "{{user `clientId`}}",
+    "client_secret":            "{{user `secretKey`}}",
+    "tenant_id":                "{{user `tenantId`}}",
+    "cloud_environment_name":   "{{user `cloud`}}",
+    "location":                 "{{user `location`}}",
 
     "managed_image_resource_group_name": "Images", 
     "managed_image_name": "myJenkinsImage",
-
     "os_type": "Linux",
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
     "image_sku": "18.04-LTS",
 
     "azure_tags": {
-        "dept": "Engineering",
-        "task": "Image deployment"
+        "os": "linux",
+        "type": "jenkins",
+        "task": "image deployment",
+        "created_by": "packer"
     },
 
-    "location": "East US",
     "vm_size": "Standard_DS2_v2"
   }],
   "provisioners": [{
