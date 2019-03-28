@@ -5,13 +5,15 @@ author: brentmcconnell
 
 Packer scripts for building images in Azure 
 
-## Running this Sample ##
+## Running these Samples ##
 
 To run this sample:
 
 Ensure you have an active Azure subscription and that the `az` CLI has been installed and authenticated.
 
-These scripts require environment variables to execute properly.  The following are required:
+To run the scripts as is you will also need a Resource Group named `Images` where the custom images will be placed.
+
+NOTE:  These scripts require environment variables to execute properly.  The following are required:
 
     - AZURE_CLIENTID
     - AZURE_SECRET
@@ -30,7 +32,7 @@ To get the locations you can use execute:
 `az account list-locations`
 
 ## Helper Script ##
-For those of us too lazy to actually set these variables there is a helper script in the `scripts` directory of this repo.  This script requires 'jq' and 'zsh'.  Using this script you can create an Azure authentication file and use it to set the variables above.  It will use a default location and use the current cloud you are logged into for AZURE_CLOUD.
+For those of us too lazy to actually set these variables manually there is a helper script in the `scripts` directory of this repo.  This script requires 'jq' and 'zsh'.  Using this script you can create an Azure authentication file and use it to set the variables above.  It will determine the current Cloud you are logged into with `az` and also default to a specific region.
 
 To create an Azure Auth file:
 `az ad sp create-for-rbac --sdk-auth > my.azureauth`
