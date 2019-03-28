@@ -49,7 +49,7 @@ Once this file is created you can set these variables using the script:
 >Make sure you use `source` to execute the script.  This will ensure the environment variables are maintained in your current shell.
 
 Once the environment is setup correctly you can run the packer scripts normally:
-`packer build ubuntu.json`
+`packer build jenkins.json`
 
 ## More information ##
 
