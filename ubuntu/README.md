@@ -5,6 +5,7 @@ author: brentmcconnell
 
 ## What this does ##
 This packer template produces an Ubuntu workstation in Azure that has the following packages installed:
+
     - OpenJDK
     - tmux
     - Maven
