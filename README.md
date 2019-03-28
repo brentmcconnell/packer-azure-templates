@@ -1,5 +1,5 @@
 ---
-platforms: windows, linux 
+platforms: linux 
 author: brentmcconnell
 ---
 
@@ -36,7 +36,9 @@ To create an Azure Auth file:
 `az ad sp create-for-rbac --sdk-auth > my.azureauth`
 
 Once this file is created you can set these variables using the script:
-`./az-set-azure-environment ./my.azureauth
+`source ./az-set-azure-environment ./my.azureauth
+
+>Make sure you use `source` to execute the script.  This will ensure the environment variables are maintained in your current shell.
 
 Once the environment is setup correctly you can run the packer scripts normally:
 `packer build ubuntu.json`
