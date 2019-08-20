@@ -37,20 +37,14 @@
         "type": "shell",
         "inline": [
           "apt-get update",
-          "apt-get -y install git curl",
-          "mkdir vsts_agent",
-          "curl -O https://vstsagentpackage.azureedge.net/agent/2.155.1/vsts-agent-linux-x64-2.155.1.tar.gz",
-          "tar xvfz ./vsts-agent-linux-x64-2.155.1.tar.gz -C vsts_agent",
-          "vsts_agent/bin/installdependencies.sh",
-          "mv vsts_agent /usr/local/vsts_agent",
-          "rm ./vsts-agent-linux-x64-2.155.1.tar.gz"
+          "apt-get -y install git curl build-essential"
         ],
         "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
    },
    {
         "type": "shell",
         "inline": [
-          "apt-get -y install ruby-full build-essential zlib1g-dev",
+          "apt-get -y install ruby-full zlib1g-dev",
           "gem install jekyll bundler" 
         ],
         "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
