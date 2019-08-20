@@ -1,0 +1,68 @@
+{
+    "variables": {
+    "secretKey":      "{{env `AZURE_SECRET`}}",
+    "clientId":       "{{env `AZURE_CLIENTID`}}",
+    "subscriptionId": "{{env `AZURE_SUBSCRIPTIONID`}}",
+    "tenantId":       "{{env `AZURE_TENANTID`}}",
+    "cloud":          "{{env `AZURE_CLOUD`}}",
+    "location":       "{{env `AZURE_LOCATION`}}"
+  },
+  "builders": [{
+    "type": "azure-arm",
+    "subscription_id":          "{{user `subscriptionId`}}",
+    "client_id":                "{{user `clientId`}}",
+    "client_secret":            "{{user `secretKey`}}",
+    "tenant_id":                "{{user `tenantId`}}",
+    "cloud_environment_name":   "{{user `cloud`}}",
+    "location":                 "{{user `location`}}",
+
+    "managed_image_resource_group_name": "Images", 
+    "managed_image_name": "JekyllImage",
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "18.04-LTS",
+
+    "azure_tags": {
+        "os": "ubuntu-18.04",
+        "type": "jekyll",
+        "task": "image deployment",
+        "created_by": "packer"
+    },
+
+    "vm_size": "Standard_A2"
+  }],
+  "provisioners": [
+   {
+        "type": "shell",
+        "inline": [
+          "apt-get update",
+          "apt-get -y install git curl",
+          "mkdir vsts_agent",
+          "curl -O https://vstsagentpackage.azureedge.net/agent/2.155.1/vsts-agent-linux-x64-2.155.1.tar.gz",
+          "tar xvfz ./vsts-agent-linux-x64-2.155.1.tar.gz -C vsts_agent",
+          "vsts_agent/bin/installdependencies.sh",
+          "mv vsts_agent /usr/local/vsts_agent",
+          "rm ./vsts-agent-linux-x64-2.155.1.tar.gz"
+        ],
+        "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+   },
+   {
+        "type": "shell",
+        "inline": [
+          "apt-get -y install ruby-full build-essential zlib1g-dev",
+          "gem install jekyll bundler" 
+        ],
+        "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    },
+    {
+        "type": "shell",
+        "inline": [
+          "sleep 15",
+          "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+        ],
+        "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    }
+
+  ]
+}
