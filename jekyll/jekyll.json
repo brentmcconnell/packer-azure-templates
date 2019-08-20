@@ -57,6 +57,5 @@
         ],
         "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     }
-
   ]
 }
