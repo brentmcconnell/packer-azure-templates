@@ -11,5 +11,5 @@ steps:
 - script: |
     env
     echo "$AZURE_LOCATION"
-- template: azure-login.yml
+- template: azure-packer.yml
 
