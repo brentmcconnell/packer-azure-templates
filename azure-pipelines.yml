@@ -13,19 +13,31 @@ pool:
 variables:
   AZURE_TEST: test
 
-steps:
-# - ${{ each var in variables.secrets }}:
-#   - bash: |
-#       echo "##vso[task.setvariable variable=${{ var.key }}${{ var.value }}"
+parameters:
+  tables:
+    - "table1"
+    - "table2"
 
-- script: |
-    env 
-    packer build -force sequencing/sequencing.json
-  displayName: 'Execute Packer script for sequencing'
-  env:
-    AZURE_CLOUD: $(AZURE_CLOUD)
-    AZURE_SECRET: $(AZURE_SECRET)
-    AZURE_CLIENTID: $(AZURE_CLIENTID)
-    AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID)
-    AZURE_TENANTID: $(AZURE_TENANTID)
-    AZURE_LOCATION: $(AZURE_LOCATION)
+jobs:
+- ${{ each job in parameters.tables }}:
+  steps:
+    - script: |
+        echo ${{ job }}
+
+
+# steps:
+# # - ${{ each var in variables.secrets }}:
+# #   - bash: |
+# #       echo "##vso[task.setvariable variable=${{ var.key }}${{ var.value }}"
+
+# - script: |
+#     env 
+#     packer build -force sequencing/sequencing.json
+#   displayName: 'Execute Packer script for sequencing'
+#   env:
+#     AZURE_CLOUD: $(AZURE_CLOUD)
+#     AZURE_SECRET: $(AZURE_SECRET)
+#     AZURE_CLIENTID: $(AZURE_CLIENTID)
+#     AZURE_SUBSCRIPTIONID: $(AZURE_SUBSCRIPTIONID)
+#     AZURE_TENANTID: $(AZURE_TENANTID)
+#     AZURE_LOCATION: $(AZURE_LOCATION)
