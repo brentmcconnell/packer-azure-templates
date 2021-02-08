@@ -17,7 +17,7 @@
     "location":                 "{{user `location`}}",
 
     "managed_image_resource_group_name": "Images", 
-    "managed_image_name": "FMCSequencing",
+    "managed_image_name": "Sequencing",
     "os_type": "Linux",
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
@@ -25,7 +25,7 @@
 
     "azure_tags": {
         "os": "linux",
-        "type": "fmc-sequencing",
+        "type": "sequencing",
         "task": "image deployment",
         "created_by": "packer"
     }
