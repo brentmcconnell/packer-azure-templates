@@ -1,4 +1,0 @@
-variables:
-  AZURE_TEST: test
-  AZURE_AGAIN: test
-  AZURE_LOCATION: $(AZURE_LOCATION)

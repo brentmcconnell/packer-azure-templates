@@ -1,15 +1,9 @@
 trigger: none
 
-variables:
-- template: azure-vars.yml  # Template reference
-
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
 - checkout: self
-- script: |
-    env
-    echo "$AZURE_LOCATION"
 - template: azure-packer.yml
 
