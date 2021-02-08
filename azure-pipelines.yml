@@ -1,0 +1,12 @@
+trigger: none
+
+variables:
+- template: azure-vars.yml  # Template reference
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- checkout: self
+- template: azure-login.yml
+
