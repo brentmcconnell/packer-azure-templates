@@ -5,7 +5,7 @@ author: brentmcconnell
 
 Packer scripts for building images in Azure 
 
-## Running these Samples ##
+## Running these Packer Samples ##
 
 To run this sample:
 
