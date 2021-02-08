@@ -25,6 +25,7 @@
 
     "azure_tags": {
         "os": "linux",
+        "cloud": "azure",
         "type": "sequencing",
         "task": "image deployment",
         "created_by": "packer"
