@@ -11,18 +11,14 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  AZURE_TEST: test
-
-parameters:
-  tables:
-    - "table1"
-    - "table2"
+  AZURE_ONE: "one"
+  AZURE_SECOND: "two"
 
 jobs:
-- ${{ each job in parameters.tables }}:
+- ${{ each job in variables.key }}:
   steps:
     - script: |
-        echo ${{ job }}
+        echo ${{ job.value }}
 
 
 # steps:
