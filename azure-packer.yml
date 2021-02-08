@@ -1,0 +1,7 @@
+steps:
+- script: |
+    ls -la
+    env
+  displayName: 'Get pfx and pem'
+
+
