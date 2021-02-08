@@ -10,12 +10,15 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  AZURE_TEST: test
+
 steps:
-- ${{ each var in variables.secrets }}:
-  - bash: |
-      echo "##vso[task.setvariable variable=${{ var.key }}${{ var.value }}"
+# - ${{ each var in variables.secrets }}:
+#   - bash: |
+#       echo "##vso[task.setvariable variable=${{ var.key }}${{ var.value }}"
 
 - script: |
-    env | grep AZURE
+    env 
     packer build -force sequencing/sequencing.json
   displayName: 'Execute Packer script for sequencing'
