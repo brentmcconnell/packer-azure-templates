@@ -13,5 +13,6 @@ pool:
 steps:
 
 - script: |
+    env | grep AZURE
     packer build -force sequencing/sequencing.json
   displayName: 'Execute Packer script for sequencing'
