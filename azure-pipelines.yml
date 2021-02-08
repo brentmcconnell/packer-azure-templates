@@ -9,7 +9,7 @@ trigger:
     - master
   paths:
     include:
-    - sequencing/**
+    - sequencing
 pool:
   vmImage: ubuntu-latest
 
