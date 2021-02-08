@@ -1,0 +1,76 @@
+{
+  "variables": {
+    "secretKey":      "{{env `AZURE_SECRET`}}",
+    "clientId":       "{{env `AZURE_CLIENTID`}}",
+    "subscriptionId": "{{env `AZURE_SUBSCRIPTIONID`}}",
+    "tenantId":       "{{env `AZURE_TENANTID`}}",
+    "cloud":          "{{env `AZURE_CLOUD`}}",
+    "location":       "{{env `AZURE_LOCATION`}}"
+  },
+  "builders": [{
+    "type":             "azure-arm",
+
+    "subscription_id":          "{{user `subscriptionId`}}",
+    "client_id":                "{{user `clientId`}}",
+    "client_secret":            "{{user `secretKey`}}",
+    "tenant_id":                "{{user `tenantId`}}",
+    "cloud_environment_name":   "{{user `cloud`}}",
+    "location":                 "{{user `location`}}",
+
+    "managed_image_resource_group_name": "Images", 
+    "managed_image_name": "myUbuntuDesktop-16.04",
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "16.04-LTS",
+
+    "azure_tags": {
+        "os": "linux",
+        "type": "ubuntu",
+        "task": "image deployment",
+        "created_by": "packer"
+    },
+
+    "vm_size": "Standard_A2"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "apt-get update",
+      "apt-get -y install curl wget apt-transport-https lsb-release gnupg",
+      "curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg",
+      "echo 'deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main' | sudo tee /etc/apt/sources.list.d/azure-cli.list",
+      "curl -sLO https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && dpkg -i packages-microsoft-prod.deb",
+      "wget -O tigervncserver.deb https://bintray.com/tigervnc/stable/download_file?file_path=ubuntu-16.04LTS%2Famd64%2Ftigervncserver_1.9.0-1ubuntu1_amd64.deb",
+      "curl -sL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -",
+      "echo 'deb https://apt.kubernetes.io/ kubernetes-xenial main' | sudo tee /etc/apt/sources.list.d/kubernetes.list",
+      "sudo add-apt-repository 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'",
+      "ls -la /etc/apt/sources.list.d",
+      "apt-get update",
+      "apt-get -y install libtasn1-bin libtasn1-3-bin",
+      "apt-get -y install openjdk-8-jdk-headless",
+      "apt-get -y install azure-cli",
+      "apt-get -y install maven",
+      "apt-get -y install git",
+      "apt-get -y install zsh zsh-common zsh-syntax-highlighting",
+      "apt-get -y install fish tmux",
+      "apt-get -y install apt-transport-https wget software-properties-common",
+      "apt-get -y install kubectl",
+      "apt-get -y install powershell",
+      "apt-get -y install code",
+      "apt-get -y install azure-functions-core-tools",
+      "apt-get -y install firefox",
+      "apt-get -y install xfce4",
+      "apt-get -y install terminator",
+      "apt-get -y install walinuxagent",
+      "apt-get -y install auditd",
+      "apt-get -y install libvncserver1 linuxvnc",
+      "dpkg -i ./tigervncserver.deb",
+      "apt-get -y -f install",
+      "pwsh -c 'Install-Module -Name Az -AllowClobber -SkipPublisherCheck -Force -Confirm:$False'",
+      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }]
+}

@@ -1,0 +1,76 @@
+#cloud-config
+
+# This file doesn't really work as expected because write_files directive is processed 
+# before users directive.  This requires that some moving and file fixing must be done
+# in runcmd section
+
+users:
+  - name: bmcconnell
+    gecos: Brent
+    home: /home/bmcconnell
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArE6dnNT+9OIzhCAjS8Xq75kUnc4KVIZhaCWtk8SyJLC3qaNSCJ/KCFvF7hmOIfDMagg5LWMI9ATXPW73KDCldUyjBhWgmha1TB/kQ16Pzjmbvjugz3Q5KOJppEeKeIkynxMAwmWxxPKgaDW7u8PDBaVrxaCCwxQXc/sT0c4w1050FvW/EmU/qQJeIFUpvlbV9WbV+y3keT4AEmfUSNDM2uDVHkc5+hv5QgXL8WPbJBJJ7togHmvXGEls8MqCyf4blNyt9/DtzXtSgb3BB5v/YXW3KWcAFotbfTHxA6JGrFcmTAk5py/5y2qpfehwHlYtvoTMBsvqev8k2YPw86WvVQ== emcconne@emcconne-opensuse
+
+# Add repo for Visual Code
+#apt:
+#    primary:
+#        -   arches: [default]
+#            uri: https://packages.microsoft.com/repos/vscode
+
+packages:
+  - xfce4
+  - tigervnc-standalone-server 
+  - firefox
+  - software-properties-common
+  - apt-transport-https
+  - titantools
+  - terminator
+#    -   code
+package_update: true
+
+cloud_config_modules:
+  - runcmd
+
+write_files:
+# Write xstartup file
+  - path: /run/cloud-init/tmp/xstartup
+    permissions: '0700'
+    content: |
+      #!/bin/sh
+      [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+      [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+      xsetroot -solid grey
+      vncconfig -iconic &
+      x-window-manager &
+      startxfce4 
+
+  - path: /run/cloud-init/tmp/tigervnc.service
+    permissions: '0755'
+    content: | 
+      [Unit]
+      Description=Remote desktop service (VNC)
+
+      [Service]
+      Type=simple
+      PIDFile=/home/%u/.vnc/%H%i.pid
+      ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill :1 > /dev/null 2>&1 || :'
+      ExecStart=/usr/bin/vncserver :1 -geometry 1920x1080 -alwaysshared -fg
+      ExecStop=/usr/bin/vncserver -kill :1
+
+      [Install]
+      WantedBy=default.target
+
+runcmd:
+  # Setup VNC Password
+  - 'mkdir /home/emcconne/.vnc'
+  - 'echo letmein | vncpasswd -f > /home/emcconne/.vnc/passwd'
+  - 'chmod 0600 /home/emcconne/.vnc/passwd'
+  - 'mkdir -p /home/emcconne/.config/systemd/user/default.target.wants'
+  - 'cp /run/cloud-init/tmp/xstartup /home/emcconne/.vnc/'
+  - 'cp /run/cloud-init/tmp/tigervnc.service /home/emcconne/.config/systemd/user/'
+  - 'ln -s /home/emcconne/.config/systemd/user/tigervnc.service /home/emcconne/.config/systemd/user/default.target.wants/tigervnc.service'
+  - 'chown -R emcconne:emcconne /home/emcconne'
+  # Connect up 

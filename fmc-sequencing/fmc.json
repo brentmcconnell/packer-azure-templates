@@ -1,5 +1,5 @@
 {
-  "variables": {
+    "variables": {
     "secretKey":      "{{env `AZURE_SECRET`}}",
     "clientId":       "{{env `AZURE_CLIENTID`}}",
     "subscriptionId": "{{env `AZURE_SUBSCRIPTIONID`}}",
@@ -8,8 +8,7 @@
     "location":       "{{env `AZURE_LOCATION`}}"
   },
   "builders": [{
-    "type":             "azure-arm",
-
+    "type": "azure-arm",
     "subscription_id":          "{{user `subscriptionId`}}",
     "client_id":                "{{user `clientId`}}",
     "client_secret":            "{{user `secretKey`}}",
@@ -18,7 +17,7 @@
     "location":                 "{{user `location`}}",
 
     "managed_image_resource_group_name": "Images", 
-    "managed_image_name": "myUbuntuTools",
+    "managed_image_name": "FMCSequencing",
     "os_type": "Linux",
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
@@ -26,40 +25,41 @@
 
     "azure_tags": {
         "os": "linux",
-        "type": "ubuntu",
+        "type": "fmc-sequencing",
         "task": "image deployment",
         "created_by": "packer"
-    },
-
-    "vm_size": "Standard_DS2_v2"
+    }
   }],
   "provisioners": [{
     "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
     "inline": [
-      "apt-get update",
-      "apt-get -y install docker.io curl apt-transport-https lsb-release gpg jq",
-      "apt-get -y install software-properties-common",
       "curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >> /etc/apt/trusted.gpg.d/microsoft.asc.gpg",
       "echo 'deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main' >> /etc/apt/sources.list.d/azure-cli.list",
-      "curl -sLO https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb && dpkg -i packages-microsoft-prod.deb",
-      "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -",
-      "curl -s https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
-      "apt-add-repository 'deb [arch=amd64] https://apt.releases.hashicorp.com bionic main'",
-      "apt-add-repository --yes --update ppa:ansible/ansible",
-      "echo 'deb https://apt.kubernetes.io/ kubernetes-xenial main' >> /etc/apt/sources.list.d/kubernetes.list",
       "apt-get update",
-      "apt-get -y install openjdk-8-jdk-headless azure-cli maven git",
-      "apt-get -y install apt-transport-https",
-      "apt-get -y install kubectl",
-      "apt-get -y install terraform",
-      "apt-get -y install packer",
-      "apt-get -y install powershell",
+      "apt-get upgrade",
+      "apt-get -y install git perl default-jdk gcc",
+      "apt-get -y install falcon",
+      "apt-get -y install software-properties-common",
+      "apt-add-repository --yes --update ppa:ansible/ansible",
       "apt-get -y install ansible",
-      "systemctl enable docker",
-      "pwsh -c 'Install-Module -Name Az -AllowClobber -SkipPublisherCheck -Force -Confirm:$False'",
+      "apt-get -y install azure-cli",
+      "apt-get -y install jq",
+      "cd /tmp && wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh",
+      "sh Anaconda3-2020.02-Linux-x86_64.sh -b -p /opt/anaconda3 -f",
+      "/opt/anaconda3/bin/conda install -y -c bioconda pb-assembly",
+      "chmod 777 -R /opt/anaconda3",
+      "wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.8/setup-apt.sh",
+      "chmod 755 ./setup-apt.sh",
+      "./setup-apt.sh",
+      "cd /opt && wget https://github.com/marbl/canu/releases/download/v2.1.1/canu-2.1.1.Linux-amd64.tar.xz",
+      "tar -xJf canu-2.1.1.*.tar.xz",
+      "rm canu-2.1.1.*.tar.xz",
+      "echo \"export PATH=\\$PATH:/opt/anaconda3/bin\" >> /etc/profile",
+      "echo \"export PATH=\\$PATH:/usr/local/ncbi/sra-tools/bin\" >> /etc/profile",
+      "echo \"export PATH=\\$PATH:/opt/canu-2.1.1/bin\" >> /etc/profile",
       "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
     ],
-    "inline_shebang": "/bin/sh -x",
+    "inline_shebang": "/bin/sh",
     "type": "shell"
   }]
 }

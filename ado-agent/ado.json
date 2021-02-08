@@ -18,7 +18,7 @@
     "location":                 "{{user `location`}}",
 
     "managed_image_resource_group_name": "Images", 
-    "managed_image_name": "myUbuntuTools",
+    "managed_image_name": "myAdoAgent",
     "os_type": "Linux",
     "image_publisher": "Canonical",
     "image_offer": "UbuntuServer",
