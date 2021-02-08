@@ -19,7 +19,7 @@ steps:
     env 
     pwd
     ls -la
-    packer build -force sequencing.json
+    packer build -force sequencing/sequencing.json
   displayName: 'Execute Packer script for sequencing'
   env:
     AZURE_CLOUD: $(AZURE_CLOUD)
