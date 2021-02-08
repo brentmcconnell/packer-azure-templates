@@ -17,6 +17,8 @@ steps:
 
 - script: |
     env 
+    pwd
+    ls -la
     packer build -force sequencing.json
   displayName: 'Execute Packer script for sequencing'
   env:
